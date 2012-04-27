@@ -1,4 +1,6 @@
 
+val HASH = "xbdz"
+val FILE = "rainbow.tbl"
 
 
 abstract class Rainbow {
@@ -6,8 +8,9 @@ abstract class Rainbow {
 
     val table: Map[Hash, Raw]
 
-    def lookup(h: Hash): Raw {
+    def lookup(hash: Hash): Raw = {
         // TODO implement logic here
+        r(hash)
     }
 }
 
@@ -16,51 +19,80 @@ trait RegFun {
     type Hash
     type Raw
 
-    def r: (Hash => Raw)
+    def r(h: Hash): Raw
 }
 
 trait HashFun {
     type Hash
     type Raw
 
-    def h: (Raw => Hash)
+    def h(raw: Raw): Hash
 }
 
 trait HashAndReg extends RegFun with HashFun
 
 
 object CharRules {
-    val a = 'a'.toByte
+    val a = 'a'.toInt
 
-    implicit def char2int (c: Char) : Int = {
-       c.toByte - a
+    def char2int (c: Char) : Int = {
+        c.toInt - a
     }
-    implicit def int2char (i: Int) : Char = {
-       i + a
-    }
-
-    implicit def itInt2SeqChar(c: Iterator[Int]): Seq[Char] = {
-        c.map(_ % 26 + a toChar) toSeq
+    def int2char (i: Int) : Char = {
+       (i%26) + a toChar
     }
 
-    val b = 'b' - a
+    implicit def str2seqInt (s: Seq[Char]): Seq[Int] = {
+        s.map(char2int)
+    }
+
+    implicit def seqInt2str(c: Seq[Int]): Seq[Char] = {
+        c.map(int2char)
+    }
 }
 
 trait FooBar extends HashAndReg {
-    import CharRules._
 
-    type Hash = Seq[Char]
-    type Raw  = Seq[Char]
+    type Hash = Seq[Int]
+    type Raw  = Seq[Int]
 
-    def h(hash: Hash): Raw = {
-        hash
+    val b = 1
+
+    def h(raw: Raw) : Hash = {
+        raw
         .sliding(2, 2)
-        .map(_.foldLeft(0)(_+_))
+        .map(_.foldLeft(0)(_+_)) toSeq
     }
 
-    def r(raw: Raw): Hash = {
-        raw ++ (raw.reverse.map(_+b % 26 + a toChar))
+    def r(hash: Hash) : Raw = {
+        hash ++ (hash.reverse.map(_+b))
     }
 }
 
+/**
+ *
+ */
+object Run {
+    import CharRules._
 
+    def loadMap: Map[Seq[Int], Seq[Int]] = io.Source.fromFile(FILE).getLines().map { (l:String) =>
+        val p = l.splitAt(8)
+        val h: Seq[Int] = p._2.tail.toSeq
+        val k: Seq[Int] = p._1.toSeq
+        (h -> k)
+    } toMap
+
+    object rainbow extends Rainbow with FooBar {
+        override val table = loadMap
+    }
+
+    def apply(s: String) = {
+        val k: Seq[Char] = rainbow.lookup(s.toSeq)
+        k
+    }
+
+}
+
+val pass: Seq[Char] = Run("xbdz")
+
+println("retrieved pass word: %s" format pass)
