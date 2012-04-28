@@ -6,10 +6,11 @@ val FILE = "rainbow.tbl"
 abstract class Rainbow {
     self: HashAndReg =>
 
-    val table: Map[Hash, Raw]
+    val table: Map[Hash, Key]
 
-    def lookup(hash: Hash): Raw = {
+    def lookup(hash: Hash): Key = {
         // TODO implement logic here
+
         r(hash)
     }
 }
@@ -17,16 +18,16 @@ abstract class Rainbow {
 
 trait RegFun {
     type Hash
-    type Raw
+    type Key
 
-    def r(h: Hash): Raw
+    def r(h: Hash): Key
 }
 
 trait HashFun {
     type Hash
-    type Raw
+    type Key
 
-    def h(raw: Raw): Hash
+    def h(key: Key): Hash
 }
 
 trait HashAndReg extends RegFun with HashFun
@@ -54,17 +55,17 @@ object CharRules {
 trait FooBar extends HashAndReg {
 
     type Hash = Seq[Int]
-    type Raw  = Seq[Int]
+    type Key  = Seq[Int]
 
     val b = 1
 
-    def h(raw: Raw) : Hash = {
-        raw
+    def h(key: Key) : Hash = {
+        key
         .sliding(2, 2)
         .map(_.foldLeft(0)(_+_)) toSeq
     }
 
-    def r(hash: Hash) : Raw = {
+    def r(hash: Hash) : Key = {
         hash ++ (hash.reverse.map(_+b))
     }
 }
