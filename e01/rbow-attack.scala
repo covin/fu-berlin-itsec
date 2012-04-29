@@ -71,28 +71,17 @@ trait HashFun {
 trait HashAndReg extends RegFun with HashFun
 
 
-object CharRules {
-    val a = 'a'.toInt
-
-    def char2int (c: Char) : Int = {
-        c.toInt - a
-    }
-    def int2char (i: Int) : Char = {
-       (i%26) + a toChar
-    }
-
-    implicit def seqInt2str(c: Seq[Int]): Seq[Char] = {
-        c.map(int2char)
-    }
-}
-
 trait FooBar extends HashAndReg {
-    import CharRules._
 
     type Hash = Seq[Char]
     type Key  = Seq[Char]
 
-    val b = 1
+    private val b = 1
+    private val a = 'a'.toInt
+
+    implicit def seqInt2str(c: Seq[Int]): Seq[Char] = {
+      c.map { case (i) => (i%26 + a) toChar}
+    }
 
     def h(key: Key) : Hash = {
         val hash: Hash = key
