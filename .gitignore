@@ -1,2 +1,4 @@
 e*.pdf
 *.dvi
+*.log
+*.out
