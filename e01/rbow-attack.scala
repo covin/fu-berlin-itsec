@@ -11,7 +11,7 @@ abstract class Rainbow {
     def walk (from: Key, to: Hash, limit: Hash): Option[Key] = {
       var _k = from
 
-    println("walk: %s" format from)
+      println("walk: %s" format from)
       h(from) match {
         case hash if hash == to => Some(from)
         case hash if hash == limit => None
@@ -25,26 +25,28 @@ abstract class Rainbow {
       var _key: Option[Key] = None
 
       while (_key == None && !_tbl.isEmpty) {
-        println("new chain lookup")
+        println("III continue chain selection")
 
         _tbl.get(_hash) match {
-          case None => _hash = h(r(_hash))
           case Some(keys) => {
-            println("hash match: %s" format _hash)
+            println("III chain match on hash [%s] -> (%d)"
+              .format (_hash, keys.size))
             val p = keys
             .map(walk(_, pwhash, _hash))
             .filter(_ != None)
 
             if (p isEmpty) {
                 // update map: remove chains
-                println("[INFO] dismiss chain(s): %s" format _hash)
+                println("WWW dismiss chain(s): %s" format _hash)
                 _tbl -= _hash
             } else {
               // we have finished
               _key = p.head
             }
           }
+          case _ =>
         }
+        _hash = h(r(_hash))
       }
       _key
     }
@@ -97,7 +99,7 @@ trait FooBar extends HashAndReg {
         .sliding(2, 2)
         .map(_.foldLeft(0)(_+_-a))
         .map(_%26).toSeq
-        println("h(key): %s -> %s" format (key.mkString, hash.mkString))
+        println("  h(key): %s -> %s" format (key.mkString, hash.mkString))
         hash
     }
 
@@ -105,7 +107,7 @@ trait FooBar extends HashAndReg {
         val part1 = hash
         val part2: Seq[Char] = hash.reverse.map(_+b-a).map(_%26)
         val key: Key = part1 ++ part2
-        println("r(hash): %s -> %s" format (hash.mkString, key.mkString))
+        println("  r(hash): %s -> %s" format (hash.mkString, key.mkString))
         key
     }
 }
@@ -143,5 +145,5 @@ object Run {
 
 Run("xbdz") match {
   case None => println("no password found")
-  case Some(p) => println("retrieved pass word: %s" format p)
+  case Some(p) => println("retrieved pass word: %s" format p.mkString)
 }
