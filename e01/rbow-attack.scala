@@ -9,8 +9,6 @@ abstract class Rainbow {
     val table: Map[Hash, Seq[Key]]
 
     def walk (from: Key, to: Hash, limit: Hash): Option[Key] = {
-      var _k = from
-
       println("walk: %s" format from)
       h(from) match {
         case hash if hash == to => Some(from)
