@@ -9,13 +9,127 @@
 \begin{document}
 
 \section{State transition}
-foo
+
+\subsection*{ACM transition on actions 1-5}
+
+\begin{table}[h]
+\caption{Initial access control matrix}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c|c|c|}
+       & $O_1$ & $O_2$ & $O_3$ &       & $U_1$ & $U_2$ & $U_3$ \\ \hline
+ $U_1$ &  r,w  &  r,w  &       &       &   -   &       &       \\ \hline
+ $U_2$ &  r,w  &  r,w  &       &       &       &   -   &       \\ \hline
+ $U_3$ &  r,w  &  r,w  &  r,w  &       &       &       &   -   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[h]
+\caption{Access control matrix after 1 and 2}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c|c|c|}
+       & $O_1$ & $O_2$ & $O_3$ &       & $U_1$ & $U_2$ & $U_3$ \\ \hline
+ $U_1$ &  r    &  r,w  &  (r)  &       &   -   &       &       \\ \hline
+ $U_2$ &  r,w  &  r,w  &  (r)  &       &       &   -   &       \\ \hline
+ $U_3$ &  r,w  &  r,w  &  r,w  &       &       &       &   -   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\begin{table}[h]
+\caption{Access control matrix after 3 and 4}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c|c|c|}
+       & $O_1$ & $O_2$ & $O_3$ & $O_4$ & $U_1$ & $U_2$ & $U_3$ \\ \hline
+ $U_1$ &       &  r,w  &  (r)  &  (r)  &   -   &       &       \\ \hline
+ $U_2$ &       &  r,w  &  (r)  &  r,w  &       &   -   &       \\ \hline
+ $U_3$ &  r,w  &  r,w  &  r,w  &  (r)  &       &       &   -   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{Final access control matrix}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c|c|c|}
+       & $O_1$ & $O_2$ & $O_3$ & $O_4$ & $U_1$ & $U_2$ & $U_3$ \\ \hline
+ $U_1$ &       &  r,w  &       &  (r)  &   -   &       &       \\ \hline
+ $U_2$ &       &  r,w  &       &  r,w  &       &   -   &       \\ \hline
+ $U_3$ &  r,w  &  r,w  &  r,w  &  (r)  &       &       &   -   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h!]
+\caption{Final security levels}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+$O_1$ & $O_2$ & $O_3$ & $O_4$ \\ \hline
+  2   &   1   &   2   &   1   \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\newpage
+\subsection*{Questions}
+\textbf{Can $U_3$ write $O_1$ after step one?} yes \\
+\textbf{Can $U_2$ read $O_1$ after step five?} no \\
+\textbf{Can $U_1$ access the content of $O_3$ after step five?}
+not directly, it is copied into $O_4$ \\
+\textbf{Can $U_3$ chaneg the permissions on $O_4$ after step four?}
+yes \\
+\textbf{Additional policy:} The security level of an object must not be
+decreased. \\
+\textbf{sufficient for a secure system?} \\
+Nein, da Inhalte höherer
+Sicherheitsstufe(n) problemlos (z.~B. durch fehlende Schreibregelung) von High
+nach Low gelangen.
 
 \section{Rainbow tables}
-bar
+
+\paragraph{Ein gültiges Passwort ist}
+sfhuvigt
+
+\paragraph{gefunden in der Kette}
+(iamyourg -$>$ cgie)
+
+\paragraph{in folgenden Schritte}
+\begin{itemize}
+\item 5 Iterationen $h(r(hash))$ des Eingabe-Hashes
+\item Testen der Kette (shouldud -$>$ ycea), Länge 8
+\item Testen der Kette (password -$>$ mqso), Länge 8
+\item Testen der Kette (geheimni -$>$ cgie), Länge 8
+\item Gefunden in (iamyourg -$>$ cgie) nach 3 Iterationon
+\end{itemize}
+
+
 
 \section{Basic assembler (optional)}
 
-\lstinputlisting[caption={Assambler Snippet}]{./e01/hello.asm}
+\subsection*{Convert $0xBEEF$}
+\begin{eqnarray}
+    0xBEEF &=>& 0xB\cdot16^3 + 0x0E\cdot16^2 + 0x0E\cdot16^1 + 0x0F\cdot16^0 \\
+           &=& 11\cdot16^3 + 14\cdot16^2 + 0x0E\cdot16^1 + 15 \\
+           &=& 45056 + 3584 + 224 + 15 \\
+           &=& 48879
+\end{eqnarray}
+im Binären reicht die einfache Konkatenation der einzelnen Binärwerte
+\begin{eqnarray}
+    0xBEEF &=>& 0x0B || 0x0E || 0x0E || 0x0F \\
+           &=>& 1011 || 1110 || 1110 || 1111 \\
+\end{eqnarray}
+
+\subsection{Pointer}
+\begin{itemize}
+    \item IP ist der Instruction Pointer und zeigt auf den nächsten Befehl im
+        Speicher, der ausgeführt werden soll.
+    \item SP ist der Stack Pointer und zeigt auf den Beginn des Stacks innerhalb
+        einer Funktion
+    \item BP ist der Base Pointer zeigt auf den ursprünglichen Stack vor Aufruf.
+        So können innerhalb einer Funktion Parameter referenziert werden.
+\end{itemize}
+Das vorangestellte E bzw. R kennzeichnen Pointer für 32-bit und analog
+64-bit Architekturen. Folglich handelt es sich bei dem Code in
+Listing~\ref{lst:hello.asm} um eine 64bit-Anwendung.
+
+\lstinputlisting[caption={Assambler Snippet},label={lst:hello.asm}]{./e01/hello.asm}
 
 \end{document}
