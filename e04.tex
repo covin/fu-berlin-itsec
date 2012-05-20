@@ -1,0 +1,160 @@
+\include{tex/00-header-ex}
+\include{tex/00-header-pkg}
+\include{tex/01-conf-lst}
+\include{tex/01-conf-fancyhdr}
+
+\newcommand{\nr}{04}
+
+\begin{document}
+\section{Chinese wall -- Bell-LaPadula}
+\section{Assembler}
+siehe: https://github.com/covin/fu-berlin-itsec/tree/master/e04
+
+\section{Covered Channels}
+Für das Encodieren bzw. Leaken von Informationen habe ich mich für Variante 5
+aus \textit{A Note on the Confinement Problem. Lampson, ACM 1973} entschieden:
+\begin{algorithm}
+\caption{Covered Channel -- send logic}
+\begin{algorithmic}
+\Function{send\_bit}{$b$}
+    \If {$b$}
+         \State create\_file(bit)
+    \EndIf
+    \State create\_file(sent)
+    \State wait\_for\_file(received)
+    \If {$b$}
+         \State delete\_file(bit)
+    \EndIf
+    \State delete\_file(sent)
+    \State wait\_for\_deleted(received)
+    \State \Return
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Covered Channel -- receive logic}
+\begin{algorithmic}
+\Function{receive\_bit}{}
+    \State wait\_for\_file(sent)
+    \If {file\_exist(bit)}
+         \State $b \gets 0xFF$
+    \Else
+         \State $b \gets 0x00$
+    \EndIf
+    \State create\_file(received)
+    \State wait\_for\_deleted(sent)
+    \State delete\_file(received)
+    \State \Return $b$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\lstset{caption={Huffmann table (Generated on http://huffman.ooz.ie/)}}
+\begin{lstlisting}
+O     = 010
+SPACE = 110
+N     = 0011
+A     = 0111
+I     = 1000
+S     = 1001
+E     = 1011
+T     = 1110
+R     = 1111
+D     = 00001
+L     = 00100
+B     = 00101
+H     = 01100
+P     = 01101
+F     = 10100
+M     = 10101
+C     = 000001
+W     = 000100
+,     = 000101
+G     = 000110
+U     = 000111
+Y     = 0000000
+.     = 0000001
+\end{lstlisting}
+
+
+Die Huffmann-Tabelle liegt bei dem Versender als Lookup-Tabelle vor, wobei wir
+natürlich auf die Byte-Darstellung des Encodings angewiesen sind. Darum ist es
+ebenfalls wichtig, die Anzahl der benötigtien Bits für ein Character-Encoding zu
+speichern. Unter der Prämisse das acht Bit für das längste Encoding ausreichen,
+benötigen wir für die Übertragung einer Tabelle mit $n$ Elementen $3 \dot n$
+Byte. Da wir pro Eintrag eine feste Segmentgröße haben, muss die $n$ initial
+übertragen werden, womit dann fest steht, wieviele Bytes bis zum vollständigen
+Empfang gelesen werden müssen.
+
+\begin{algorithm}
+\caption{Send the message}
+\begin{algorithmic}
+\Function{send}{c, bits=length(c)}
+    \ForAll{bits $b \in c_{0 \to bits}$}
+        \State send\_bit($b$)
+    \EndFor
+
+\EndFunction
+
+\State $M =$ "The confinement problem, as\ldots"
+\Comment build Huffmann encoding table from $M$
+\State $dict = $ Map($char \gets (encoding,nbits)$)
+
+\State $l \gets $ dict.length
+\State send($l$)
+\Comment send Huffmann encoding table
+\ForAll{entries $e \in dict$}
+    \State send($e.char$)
+    \State send($e.encoding$)
+    \State send($e.nbits$)
+\EndFor
+\Comment finally send message
+\ForAll {characters $c \in M$}
+    \State $e \gets dict$.find($c$)
+    \State send($e.encoding$, $e.nbits$)
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Receive the message}
+\begin{algorithmic}
+
+\Function{receive}{bits=8}
+    \State $b \gets 0x00$
+    \For{$i = 0 \to bits$}
+        \State $b \gets b \| $(receive\_bit() $\& (0x01 << i)$)
+    \EndFor
+    \State \Return $b$
+\EndFunction
+
+\Function{receive\_encoded}{$dict$}
+    \State $in \gets 0x00$
+    \State $i \gets 0$
+    \Repeat
+        \State $in \gets in \| $(receive\_bit() $\& (0x01 << i++)$)
+    \Until{$(in,i-1) \in dict$}
+    \State \Return $dict$.find($in$)
+\EndFunction
+
+
+\State $M = \{\}$
+\State $dict = $ Map()
+
+\Comment receive Huffmann encoding table
+\State $l \gets $ receive()
+\For{$i = 0 \to l$}
+    \State $char \gets$ receive()
+    \State $enc \gets$ receive()
+    \State $bits \gets$ receive()
+    \State $dict$.put($(enc,bits) \gets char$)
+\EndFor
+\Comment receive Huffmann encoded message
+\For {$c \gets$ receive\_encoded($dict$)}
+    \State $M$.append($c$)
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\end{document}
