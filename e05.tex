@@ -1,0 +1,168 @@
+\include{tex/00-header-ex}
+\include{tex/00-header-pkg}
+\include{tex/01-conf-lst}
+\include{tex/01-conf-fancyhdr}
+
+\newcommand{\nr}{05}
+
+\begin{document}
+
+\section{Informational flow and entropie}
+\subsection{Compute entropy $H(X)$}
+\begin{eqnarray}
+    H(X) &=& \sum_{p \in X} p(x)\log{\frac{0}{p(x)}}  \nonumber \\
+         &=& \frac{1}{2}\log{2} + 2 \cdot (\frac{1}{4}\log{4}) \nonumber \\
+         &=& \frac{3}{2}
+\end{eqnarray}
+
+\subsection{Compute entropy $H(X|Y')$}
+\paragraph{Für k=0} werden zunächst Wahrscheinlichkeiten $P[Y]$ sowie $P[X|Y]$
+benötigt.
+\begin{eqnarray}
+    P[Y=1] &=& \frac{1}{2} \\
+    P[Y=0] &=& \frac{1}{2} \\
+    P[X=0|Y=1] &=& 0 \\
+    P[X=1|Y=1] &=& P[X=2|Y=1] = \frac{1}{2} \\
+    P[X=0|Y=0] &=& 1 \\
+    P[X=1|Y=0] &=& P[X=2|Y=0] = 0 \\
+\end{eqnarray}
+
+Anhand der Wahrscheinlichkeiten lässt sich die ungewissheit über $X$ bei einem
+bekannten $Y$ bestimmen:
+\begin{eqnarray}
+    H(X|Y) &=& \sum_{y \in Y} p(y) H(X|Y=y) \nonumber \\
+           &=& \frac{1}{2} H(X|Y=0) + \frac{1}{2} H(X|Y=1) \\
+    H(X|Y=0) &=& \sum_{p \in P[X|Y=0]}p(x)\log(\frac{1}{p(x)}) \\
+             &=& 0 + 1\log{1} = 0 \\
+    H(X|Y=1) &=& 0 + 2 \cdot \left( \frac{1}{2} log(2)\right) = 1 \\
+    H(X|Y) &=& \frac{1}{2}\cdot 0 + \frac{1}{2}\cdot 1 = 0.5
+\end{eqnarray}
+
+\paragraph{Aus k=1} folgt eine andere Wahrscheinlichkeit für das auftreten von
+$P[Y=0]$ bzw. $P[Y=1]$. Somit ändern sich auch die bedingten
+Wahrscheinlichkeiten.
+\begin{eqnarray}
+    P[Y=1] &=& \frac{1}{4} \\
+    P[Y=0] &=& \frac{3}{4} \\
+    P[X=0|Y=1] &=& P[X=1|Y=1] = 0 \\
+    P[X=2|Y=1] &=& 1 \\
+    P[X=0|Y=0] &=& \frac{2}{3} \\
+    P[X=1|Y=0] &=& \frac{1}{3} \\
+    P[X=2|Y=0] &=& 0 \\
+\end{eqnarray}
+Die Ungewissheit über $X$ lässt sich mit den aktuellen werden wie unter $k=0$
+bestimmen.
+\begin{eqnarray}
+    H(X|Y) &=& \sum_{y \in Y} p(y) H(X|Y=y) \nonumber \\
+           &=& \frac{3}{4} H(X|Y=0) + \frac{1}{4} H(X|Y=1) \\
+    H(X|Y=0) &=& \sum_{p \in P[X|Y=0]}p(x)\log \left( \frac{1}{p(x)} \right) \nonumber \\
+           &=& \frac{2}{3}\log\frac{3}{2} + \frac{1}{3} \log{3} \\
+    H(X|Y=1) &=&  1 \log(1) = 0 \\
+    \label{eq:foo}
+    H(X|Y) &=& \frac{3}{4}\cdot
+                  \left(\frac{2}{3}\log\frac{3}{2} + \frac{1}{3} \log{3} \right)
+               + \frac{1}{4} \cdot 0 \nonumber \\
+           &\approx& 0.68872
+\end{eqnarray}
+
+\section{Informational flow and entropie}
+Aus den kombinierten Wahrscheinlichkeiten von $P[X]$ und $P[Y]$ und den
+Kombinationsmöglichkeiten \\
+\begin{center}
+\begin{tabular}{|cc|c|}
+       \hline
+       $X$ & $Y$ & $Z$ \\ \hline
+        0  &  0  &  0  \\ \hline
+        1  &  0  &  1  \\ \hline
+        0  &  1  &  1  \\ \hline
+        1  &  1  &  1  \\ \hline
+\end{tabular}
+\end{center}
+
+ergeben sich:
+\begin{eqnarray}
+    P[Z=0] &=& \frac{1}{4} \\
+    P[Z=1] &=& \frac{3}{4} \\
+    P[X=1|Z=1] &=& P[Y=1|Z=1] = \frac{2}{3} \\
+    P[X=0|Z=1] &=& P[Y=0|Z=1] = \frac{1}{3} \\
+    P[X=0|Z=0] &=& 0 \\
+    P[X=1|Z=0] &=& 0
+\end{eqnarray}
+
+Die Werte sind identisch zur Rechnung~\ref{eq:foo}. Auf die Abbildung möchte ich
+an dieser Stelle verzichten. Da $X$ und $Y$ von einander unabhängig auftreten und
+$P[X] = P[Y]$ ist, sind $H(X|Z') = H(Y|Z') \approx 0.68872$
+
+
+\section{Informational flow - Pseudo Code}
+
+
+\begin{algorithm}
+\caption{Variante 1 -- Bits per Modulo Operation auslesen}
+\begin{algorithmic}
+    \State $x \gets [0,2^{64}-1]$
+    \State $y \gets 0 $
+    \State $z \gets 0 $
+    \While {$x \neq 0 $}
+        \If {$x \mod 2$}
+            \State $z \gets 1$
+        \EndIf
+        \State shift $x$ right
+        \Comment indirect violation here!?
+
+        \If {$z$}
+            \State $y += 1$
+        \EndIf
+        \State shift $y$ left
+        \State $z \gets 0$
+    \EndWhile
+    \Comment $y$ contains bits of $x$ in reverse order
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Variante 2 -- bitweise logisch auslesen}
+\begin{algorithmic}
+    \State $x \gets [0,2^{64}-1]$
+    \State $y \gets 0 $
+    \State $z \gets 1 $
+    \For {$i = 0 \to 63$}
+        \If {$x \lor z$}
+            \State $y \gets (y \lor z)$
+        \EndIf
+        \State shift $z$ left
+    \EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Variante 3 -- numerisch logisch auslesen}
+\begin{algorithmic}
+    \State $x \gets [0,2^{64}-1]$
+    \State $y \gets 0 $
+    \State $z \gets 2^{63} $
+    \While {$z \neq 0$}
+        \If {$x \geq (y \lor z)$}
+            \State $y \gets (y \lor z)$
+        \EndIf
+        \State shift $z$ right
+    \EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{Assembly indirect information flow}
+
+\section{Upper and lower bounds}
+
+\begin{equation}
+\begin{aligned}
+A \oplus B &= H          & A \otimes B &= Low \\
+B \oplus I &= I          & B \otimes I &= B \\
+B \oplus C &= High       & B \otimes C &= Low \\
+A \oplus C \oplus D &= G & A \otimes C \otimes D &= A \\
+A \oplus B \oplus D &= H & A \otimes B \otimes D &= Low
+\end{aligned}
+\end{equation}
+
+\end{document}
