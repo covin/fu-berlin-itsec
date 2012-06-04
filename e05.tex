@@ -95,6 +95,7 @@ $P[X] = P[Y]$ ist, sind $H(X|Z') = H(Y|Z') \approx 0.68872$
 
 
 \section{Informational flow - Pseudo Code}
+\label{sec:aufgabe3}
 
 
 \begin{algorithm}
@@ -137,6 +138,7 @@ $P[X] = P[Y]$ ist, sind $H(X|Z') = H(Y|Z') \approx 0.68872$
 
 \begin{algorithm}
 \caption{Variante 3 -- numerisch logisch auslesen}
+\label{psd:v3}
 \begin{algorithmic}
     \State $x \gets [0,2^{64}-1]$
     \State $y \gets 0 $
@@ -152,6 +154,9 @@ $P[X] = P[Y]$ ist, sind $H(X|Z') = H(Y|Z') \approx 0.68872$
 
 
 \section{Assembly indirect information flow}
+Listing~\ref{lst:asm} ist eine Implementierung des Pseudocodes~\ref{psd:v3} aus
+Aufgabe~\ref{sec:aufgabe3}
+\lstinputlisting[caption={TheCode},label={lst:asm}]{e05/iflow.s}
 
 \section{Upper and lower bounds}
 
