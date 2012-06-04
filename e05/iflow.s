@@ -1,12 +1,12 @@
 .section .data
 # 992312423124
-x: .quad 0xe70a6df2d4
+x: .quad 0x0c
 line: .asciz "y: %lx\n"
 .extern printf
 .global main
 main:
 # used as bit pointer, start at highest bit
-mov $0x8000000000000000,%rax
+mov $0x8000,%rax
 # register containing y
 mov $0x00,%rbx
 loop:
