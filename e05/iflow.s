@@ -1,18 +1,19 @@
 .section .data
 # 992312423124
-x: .quad 0x0c
-line: .asciz "y: %lx\n"
+x: .quad 0xe70a6df2d4
+line: .asciz "y: 0x%lx\n"
 .extern printf
 .global main
 main:
 # used as bit pointer, start at highest bit
-mov $0x8000,%rax
+mov $0x80000000000000,%rax
 # register containing y
 mov $0x00,%rbx
 loop:
     or %rax,%rbx
-    cmp x(%rip),%rbx
-    jge foo
+
+    cmp x,%rbx
+    jle foo
         xor %rax,%rbx
     foo:
     shr $0x01,%rax
