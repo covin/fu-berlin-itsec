@@ -47,7 +47,9 @@
     Question 01: Execution-based information flow
                  - single accumulator machine
     Question 02: Information flow control certification
+                 - syntax certification tree
     Question 03: Information flow control certification
+                 - security conditions for case-statement
 
 
 

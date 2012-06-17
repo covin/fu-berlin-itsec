@@ -1,0 +1,115 @@
+\include{tex/00-header-ex}
+\include{tex/00-header-pkg}
+\include{tex/01-conf-lst}
+\include{tex/01-conf-fancyhdr}
+\include{tex/02-cmd}
+
+\newcommand{\nr}{07}
+
+\begin{document}
+I certify that this submission is my own original work and that I have due acknowledged any work of others.
+
+\section{Execution-based information flow control}
+\lstset{caption={copy1 aus Denning Figure 5.8}}
+\begin{lstlisting}
+    y := 0          1 LOAD 0
+                    2 STORE y
+    z := 0          3 LOAD 0
+                    4 STORE z
+    if x = 0        5 LOAD x
+                    6 BZ 8     // push (7,classof(pc))
+                    7 B 11
+    then z := 1     8 LOAD 1
+                    9 STORE z
+                   10 RETURN   // (pc,pc) = pop()
+    if z = 0       11 LOAD z
+                   12 BZ 14    // push (13, pc)
+                   13 B 17
+    then y := 1    14 LOAD 1
+                   15 STORE y
+                   16 RETURN   // (pc,pc) = pop()
+                   17 STOP
+\end{lstlisting}
+
+Sicherheitsklassen: $\sclass{x} := high; \sclass{y} := low; \sclass{z} := high$
+
+\begin{table}[h]
+\caption{Trace table for x=0}
+\begin{center}
+    \begin{tabular}{l|p{5cm}|c|c|c|c|c|c|c|c|}
+    code line & semantic
+              & x & y & z & acc & \sclass{acc} & pc & \sclass{pc} & stack \\ \hline
+    0         & init
+              & 0 & - & - &  0  & low          & 1  & $ low $     & - \\
+    1 (LOAD)  & $ acc \gets 0; \sclass{acc} \gets low \oplus low = low $
+              & 0 & - & - &  0  & low            & 2  & $ low $     & - \\
+    2 (STORE) & $ \sclass{acc} \oplus \sclass{pc} \leq \sclass {y}
+                \mgdw low \leq low \mtf y \gets acc$
+              & 0 & 0 & - &  0  & low          & 3  & $ low $     & - \\
+    3 (LOAD)  & $ acc \gets 0; \sclass{acc} \gets low \oplus \sclass{pc}$
+              & 0 & 0 & - &  0  & low          & 4  & $ low $     & - \\
+    4 (STORE) & $ \sclass{acc} \oplus \sclass{pc} \leq \sclass {z}
+                \mgdw low \leq high \mtf z \gets acc$
+              & 0 & 0 & 0 &  0  & low          & 5  & $ low $     & - \\
+    5 (LOAD)  & $acc \gets x; \sclass{acc} \gets high$
+              & 0 & 0 & 0 &  0  & high         & 6  & $ low $     & - \\
+    6 (BZ)    & $ acc = 0 \mtf push(..); \sclass{pc} \gets \sclass{acc} \oplus \sclass{pc} = high; pc \gets 8 $
+              & 0 & 0 & 0 &  0  & high         & 8  & $ high $    & (7,$low$) \\
+    8 (LOAD)  & $ acc \gets 1; \sclass{acc} \gets low \oplus \sclass{pc} = high$
+              & 0 & 0 & 0 &  1  & high         & 9  & $ high $    & (7,$low$) \\
+    9 (STORE) & $ \sclass{acc} \oplus \sclass{pc} \leq \sclass {z}
+                \mgdw high \leq high \mtf z \gets acc$
+              & 0 & 0 & 1 &  1  & high         & 10 & $ high $    & (7,$low$) \\
+   10 (RETURN)& pop
+              & 0 & 0 & 1 &  1  & high         & 7  & $ low $     & - \\
+    7 (B)     & goto\ldots
+              & 0 & 0 & 1 &  1  & high         & 11 & $ low $     & - \\
+   11 (LOAD)  & $acc \gets z; \sclass{acc} \gets high$
+              & 0 & 0 & 1 &  1  & high         & 12 & $ low $     & - \\
+   12 (BZ)    & $ acc \neq 0 \mtf skip $
+              & 0 & 0 & 1 &  1  & high         & 13 & $ low $     & - \\
+   13 (B)     & goto 17
+              & 0 & 0 & 1 &  1  & high         & 17 & $ low $     & - \\
+   17 (STOP)  & halt
+              & 0 & 0 & 1 &     &              &    &             & - \\
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{Trace table for x=1}
+\begin{center}
+    \begin{tabular}{l|p{5cm}|c|c|c|c|c|c|c|c|}
+    code line & semantic
+              & x & y & z & acc & \sclass{acc} & pc & \sclass{pc} & stack \\ \hline
+    \ldots    & until line five same as above
+              & 1 & 0 & 0 &  0  & low          & 5  & $ low $     & - \\
+    5 (LOAD)  & $acc \gets x; \sclass{acc} \gets high$
+              & 1 & 0 & 0 &  1  & high         & 6  & $ low $     & - \\
+    6 (BZ)    & $ acc \neq 0 \mtf skip $
+              & 1 & 0 & 0 &  1  & high         & 7  & $ low $     & - \\
+    7 (B)     & goto 11
+              & 1 & 0 & 0 &  1  & high         & 11 & $ low $     & - \\
+   11 (LOAD)  & $acc \gets z; \sclass{acc} \gets high$
+              & 1 & 0 & 0 &  0  & high         & 12 & $ low $     & - \\
+   12 (BZ)    & $ acc = 0 \mtf push(..); \sclass{pc} \gets \sclass{acc} \oplus \sclass{pc} = high; pc \gets 14 $
+              & 1 & 0 & 0 &  0  & high         & 14 & $ high $    & (13,$low$) \\
+   14 (LOAD)  & $ acc \gets 1; \sclass{acc} \gets low \oplus \sclass{pc} = high$
+              & 1 & 0 & 0 &  1  & high         & 15 & $ high $    & (13,$low$) \\
+   15 (STORE) & $ \sclass{acc} \oplus \sclass{pc} \not\leq \sclass {y}
+                \mgdw high \not\leq low \mtf skip$
+              & 1 & 0 & 0 &  1  & high         & 16 & $ high $    & (13,$low$) \\
+   10 (RETURN)& pop
+              & 1 & 0 & 0 &  1  & high         & 13 & $ low $     & - \\
+   13 (B)     & goto 17
+              & 1 & 0 & 0 &  1  & high         & 17 & $ low $     & - \\
+   17 (STOP)  & halt
+              & 0 & 0 & 0 &     &              &    &             & - \\
+\end{tabular}
+\end{center}
+\end{table}
+
+Die Methode copy1 ist unter den gewählten Sicherheitsklassen sicher. Es werden keine Sicherheitsbedingungen verletzt. Die Methode gibt nach $low$ immer $y:=0$ zurück, vollständig unabhängig von der $high$ Eingabe $x$. Es gibt kein Informationsfluss $y \gets x$, womit die Funktion auch leider nicht den Zweck erfüllt ;)
+
+
+\end{document}
