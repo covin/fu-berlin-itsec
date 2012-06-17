@@ -31,6 +31,23 @@
     Question 01-03: Information flow control and entropy
     Question 04: Assembly indirect information flow
     Question 05: Upper and lower bounds
+                 - Lattice structure
+
+    Exercise 06
+    -----------
+    Question 01: Enforcement of security policies for computation
+                 - flowchart
+                 - surveillance protection mechanism
+                 - execution path
+    Question 02: Enforcement of security policies for computation
+                 - surveillance protection mechanism
+
+    Exercise 07
+    -----------
+    Question 01: Execution-based information flow
+                 - single accumulator machine
+    Question 02: Information flow control certification
+    Question 03: Information flow control certification
 
 
 
