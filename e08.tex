@@ -1,0 +1,53 @@
+\include{tex/00-header-ex}
+\include{tex/00-header-pkg}
+\include{tex/01-conf-lst}
+\include{tex/01-conf-fancyhdr}
+\include{tex/02-cmd}
+
+\newcommand{\nr}{08}
+
+\begin{document}
+I certify that this submission is my own original work and that I have due
+acknowledged any work of others.
+
+\section{Information flow control proofs}
+
+\section{Information flow control certification}
+
+\begin{table}[h]
+\caption{certification steps - compiler-based verification}
+\begin{center}
+    \begin{tabular}{l|c|l|c}
+        $S_{codeline}$ & type & verify & statement class \\ \hline
+        $S_8 $     & assignment & $\sclass{m} \le \sclass{i} $ & $\sclass{i}$\\
+        $S_{10}$   & assignment & $\sclass{m} \le \sclass{j} $ & $\sclass{j}$ \\
+        $S_7$      & condition  & $\sclass{x} \oplus \sclass{a} \oplus
+        \sclass{m} \le \sclass{S_8} \otimes \sclass{S_{10}}$ & $\sclass{i} \otimes
+        \sclass{j} $ \\
+        $S_6$      & assignment & $\sclass{i} \oplus \sclass{j} \le \sclass{m}$
+        & $\sclass{m}$ \\
+        $S_{13}$   & array assignment & $\sclass{i} \oplus low \le \sclass{a}$ &
+        $ \sclass{a} $ \\
+        $S_5$      & while loop & $\sclass{i} \oplus \sclass{j} \le \sclass{S_6}
+        \otimes \sclass{S_7} \otimes \sclass{S_{13}} $ & $\sclass{m} \otimes
+        \sclass{i} \otimes \sclass{j} \otimes \sclass{a}$ \\
+        $S_4$      & assignment & $\sclass{n} \le \sclass{j}$ & $\sclass{j}$
+    \end{tabular}
+\end{center}
+\end{table}
+
+code line 7 states minimum class: $\sclass{i} = \sclass{j} = \{a,m,x\}$.
+If $S_7$ holds it must hold verifications of $S_{6}$, $S_{10}$ and $S_5$ which implies
+reflexitive relations,so that $\sclass{m} = \sclass{j} = \sclass{i}$ and $\sclass{a} =
+\sclass{i}$.
+\\
+As result: $\sclass{a} = \sclass{i} = \sclass{j} = \sclass{m} \gets \{a,i,j,m,x\}$
+
+
+
+\section{Setting up working environment and simple example}
+
+
+
+
+\end{document}

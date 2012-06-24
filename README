@@ -51,6 +51,12 @@
     Question 03: Information flow control certification
                  - security conditions for case-statement
 
-
+    Exercise 08
+    -----------
+    Question 01: Information flow control proofs
+                 - post- and precondition proof
+    Question 02: Information flow control certification
+                 - identify flow specifications
+    Question 03: Setting up working environment and simple example
 
 
