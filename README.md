@@ -3,9 +3,9 @@ Some exercises of university course on IT security
 
 Exercise 01
 -----------
-Question 01: State transition 
-Question 02: Rainbow tables 
-Question 03: Basic assemler (optional)
+-   **Question 01:** State transition 
+-   **Question 02:** Rainbow tables 
+-   **Question 03:** Basic assemler (optional)
 
 Exercise 02
 -----------
