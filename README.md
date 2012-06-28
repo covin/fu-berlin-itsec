@@ -5,7 +5,7 @@ Exercise 01
 -----------
 -   **Question 01:** State transition
 -   **Question 02:** Rainbow tables
--   **Question 03:** Basic assemler (optional)
+-   **Question 03:** Basic assembler (optional)
 
 Exercise 02
 -----------
@@ -58,4 +58,11 @@ Exercise 08
     * identify flow specifications
 -   **Question 03:** Setting up working environment and simple example
 
-
+Exercise 09
+-----------
+-   **Question 01:** Building shellcode
+    * write shellcode that runs "/bin/sh" via call to execve
+    * explain every line!1!
+-   **Question 02:** Packer and unpacker
+    * write a packer in C
+    * write an unpacker in assembly
