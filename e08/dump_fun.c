@@ -10,11 +10,11 @@ int foo()
     return a + 2*b;
 }
 
-int bar() {}
+void bar() {}
 
 char* dump_fun() {
-    unsigned char* start = (char*) &foo;
-    unsigned char* stop =  (char*) &bar;
+    unsigned char* start = (unsigned char*) &foo;
+    unsigned char* stop =  (unsigned char*) &bar;
     unsigned int size = stop - start;
     unsigned int i;
 
@@ -31,7 +31,7 @@ char* dump_fun() {
     return fun;
 }
 
-void main()
+int main()
 {
     char* buff = dump_fun();
     int x = ((int (*)()) buff)();
