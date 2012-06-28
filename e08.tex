@@ -11,7 +11,14 @@ I certify that this submission is my own original work and that I have due
 acknowledged any work of others.
 
 \section{Information flow control proofs}
-
+\begin{eqnarray}
+    P_4 = \cdots\\
+    Q_4 = \{\cdots 0 \le i \le x, \uuline{i} \le \uuline{x} \oplus \uuline{n} \} \\
+    P_7 = \{y < 0, \uuline{pc} \le \uuline{y}\} \\
+    Q_7 = \{\uuline{y} \le \uuline{n}, \uuline{pc} \le \uuline{y}\} \\
+    \{V'_7,L'_6\} = \{ \} \\
+    Q_8 = \{V'_7, L_6\} = \{,\uuline{pc} \le PC_m \oplus \uuline{y}\}
+\end{eqnarray}
 \section{Information flow control certification}
 
 \begin{table}[h]
